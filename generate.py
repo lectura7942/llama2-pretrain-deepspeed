@@ -1,21 +1,21 @@
-### generate.py
-
 from transformers import TrainingArguments, Trainer, DataCollatorForLanguageModeling
-from model import load_model, get_max_length
+from model import load_model
 from transformers import AutoTokenizer, LlamaForCausalLM
 import torch
 from tqdm import tqdm 
-model_path = "/home/ubuntu/llama2-test/checkpoints"
+
+MODEL_ID = "/home/ubuntu/llama2-test/checkpoints"
+TOKENIZER_ID = "meta-llama/Llama-2-7b-hf"
    
 tokenizer = AutoTokenizer.from_pretrained(
-    "meta-llama/Llama-2-7b-hf", 
+    TOKENIZER_ID, 
     add_bos_token=True, 
     add_eos_token=True,
     ) # default don't add eos
 
 # eod tokens added in training
 model = LlamaForCausalLM.from_pretrained(
-        model_path,
+        MODEL_ID,
         # load_in_8bit = True,
         # device_map="auto", # need accelerate
         torch_dtype=torch.float16,
@@ -36,5 +36,6 @@ for idx, d in tqdm(enumerate(eval_dataset), desc="Generating", total=len(eval_da
     with torch.no_grad():
         output_text = tokenizer.decode(model.generate(**model_input, max_new_tokens=100)[0], )
     results.append(output_text)
+    
 for r in results: 
     print(r)

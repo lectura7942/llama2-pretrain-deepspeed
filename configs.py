@@ -2,24 +2,27 @@ from transformers import AutoConfig, TrainingArguments
 import os
 from deepspeed.utils import logger as ds_logger
 
+BASE_MODEL_ID = "meta-llama/Llama-2-7b-hf"
+TOKENIZER_ID = "meta-llama/Llama-2-7b-hf"
+CHUNK_SIZE = 4096
+DATASET = "data/news_4096_Llama-2-7b-hf"
 
-def get_model_config(model_name, context_length: int=4096):
+def get_model_config():
     """Wrapper for AutoConfig.from_pretrained(). 
     
         return (Config, unused_kwargs)"""
     ds_logger.info("Setting Configuration...")
     return AutoConfig.from_pretrained(
-        model_name,
+        BASE_MODEL_ID,
         return_unused_kwargs=True,
-        max_position_embeddings=context_length,
         use_cache=False,    
-		### 밑 설정값을 바꿔서 모델 파라미터를 변경할 수 있다.
-    ### below are attention is all you need transformer base parameters
+### 밑 설정값을 바꿔서 모델 파라미터를 변경할 수 있다.
+        max_position_embeddings=CHUNK_SIZE,
         # hidden_size = 4096,
-        # intermediate_size = 4096,
-        # num_hidden_layers = 6,
-        # num_attention_heads = 8,
-        # num_key_value_heads = 8,
+        # intermediate_size = 11008,
+        # num_hidden_layers = 32,
+        # num_attention_heads = 32,
+        # num_key_value_heads = 32,
         )
 
 
