@@ -2,10 +2,10 @@ from transformers import AutoConfig, TrainingArguments
 import os
 from deepspeed.utils import logger as ds_logger
 
-BASE_MODEL_ID = "meta-llama/Llama-2-7b-hf"
-TOKENIZER_ID = "meta-llama/Llama-2-7b-hf"
-CHUNK_SIZE = 4096
-DATASET = "data/news_4096_Llama-2-7b-hf"
+BASE_MODEL_ID = "beomi/llama-2-ko-7b"
+TOKENIZER_ID = "beomi/llama-2-ko-7b"
+CHUNK_SIZE = 1024 # llama2는 4096
+DATASET = "data/naver_news_1024_llama-2-ko-7b"
 
 def get_model_config():
     """Wrapper for AutoConfig.from_pretrained(). 
@@ -30,8 +30,8 @@ def get_training_arguments():
     """Wrapper for TrainingArguments"""
     
     return TrainingArguments(
-        output_dir="/home/ubuntu/llama2-test/checkpoints",
-        deepspeed = "/home/ubuntu/llama2-test/pretrain/ds_config.json", # .json 파일 또는 dict. deepspeed 설정값 전달.
+        output_dir="checkpoints",
+        deepspeed = "ds_config.json", # .json 파일 또는 dict. deepspeed 설정값 전달.
         fp16=True,
         gradient_checkpointing=True,
 
@@ -48,9 +48,9 @@ def get_training_arguments():
         lr_scheduler_type="cosine",
 
         logging_steps=1,
-        report_to="none", # disable wandb
+        report_to="none", # disable wandb if logged in
         save_strategy="steps",
         save_total_limit=1,
         overwrite_output_dir=True,
-        save_on_each_node=True, # Multi-node 시 공유 메모리 없으면 각 노드에다 체크포인트 저장
+        # save_on_each_node=True, # Multi-node 시 공유 메모리 없으면 각 노드에다 체크포인트 저장
     )

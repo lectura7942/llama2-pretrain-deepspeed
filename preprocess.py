@@ -2,16 +2,35 @@ import jsonlines
 import datasets as ds
 from functools import partial
 
-def make_HFdataset(data_path):
-    print("Transforming jsonl -> hf datasets...")
-    with jsonlines.open(data_path) as f:
-        data = [l for l in f] 
+def make_HFdataset(data_path, source: str = "jsonl", source_column:str="text"):
+    """make HF dataset from jsonlines or HF dataset.
+    - `data_path`: path of jsonlines file or HF dataset
+    - `source`: `hf` to download from hub or `jsonl` to get from jsonlines file
+    - `source_column`: This column name will be chaned to "text"
+    """
+    
+    if source == "hf":
+        
+        """hf dataset -> text only hf dataset"""
+        raw_dataset = ds.load_dataset(data_path, split="train")
+        
+        raw_dataset = raw_dataset.map(
+            lambda x: {"text": x[source_column]}, 
+            batched=True, remove_columns=raw_dataset.column_names
+            )
+        
+    elif source == "jsonl":
+        """jsonl -> hf dataset"""
+        print("Transforming jsonl -> hf datasets...")
+        with jsonlines.open(data_path) as f:
+            data = [l for l in f] 
 
-    data_dict = {
-        'text': [d['text'] for d in data]
-    }
+        data_dict = {
+            'text': [d[source_column] for d in data]
+        }
 
-    raw_dataset = ds.Dataset.from_dict(data_dict)
+        raw_dataset = ds.Dataset.from_dict(data_dict)
+        
     return raw_dataset
 
 def split_chunk(lst, chunk_size):
@@ -21,7 +40,7 @@ def split_chunk(lst, chunk_size):
 def tokenize(batch, tokenizer):
     return tokenizer(
         batch['text'],
-        truncation=False
+        # REMOVE max_length
     )
 
 def preprocess_dataset(tokenizer, max_length, raw_dataset):
@@ -47,16 +66,17 @@ def preprocess_dataset(tokenizer, max_length, raw_dataset):
     dataset = ds.Dataset.from_dict(temp)
     return dataset
 
+
 if __name__ == "__main__":
     import os
     from transformers import AutoTokenizer
     
-    DATA_PATH = 'data/news_data_2gb.jsonl'
-    CHUNK_SIZE = 4096
-    DATASET_PREFIX = "news"
-    TOKENIZER_ID = "meta-llama/Llama-2-7b-hf"
+    DATA_PATH = "daekeun-ml/naver-news-summarization-ko"
+    CHUNK_SIZE = 1024 # Llama2-7b는 4096
+    DATASET_PREFIX = "naver_news"
+    TOKENIZER_ID = "beomi/llama-2-ko-7b"
     
-    raw_dataset = make_HFdataset(DATA_PATH)
+    raw_dataset = make_HFdataset(DATA_PATH, source="hf", source_column="document")
 
     print("Load Pretrained Tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(

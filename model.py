@@ -21,7 +21,7 @@ def load_model():
     tokenizer = AutoTokenizer.from_pretrained(
         TOKENIZER_ID if len(TOKENIZER_ID) > 0 else BASE_MODEL_ID,
         add_bos_token=True,
-        add_eos_token=True
+        add_eos_token=False
     )
     # Needed for Llama Tokenizer
     tokenizer.pad_token = tokenizer.unk_token
@@ -36,7 +36,7 @@ def load_model():
     with deepspeed.zero.Init():
         ds_logger.info("Load Model based on config...")
         model = LlamaForCausalLM(config)
-        model.resize_token_embeddings(len(tokenizer))
+        model.resize_token_embeddings(len(tokenizer)) # 모델과 토크나이저가 다를 때 모델의 임베딩 크기 수정
         ds_logger.info("Loaded Initialized Model based on config!\n")
         
 

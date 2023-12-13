@@ -4,29 +4,30 @@ from transformers import AutoTokenizer, LlamaForCausalLM
 import torch
 from tqdm import tqdm 
 
-MODEL_ID = "/home/ubuntu/llama2-test/checkpoints"
-TOKENIZER_ID = "meta-llama/Llama-2-7b-hf"
+MODEL_ID = "checkpoints"
+TOKENIZER_ID = "beomi/llama-2-ko-7b" # "checkpoints"
    
 tokenizer = AutoTokenizer.from_pretrained(
     TOKENIZER_ID, 
     add_bos_token=True, 
-    add_eos_token=True,
+    add_eos_token=False,
     ) # default don't add eos
 
 # eod tokens added in training
 model = LlamaForCausalLM.from_pretrained(
         MODEL_ID,
-        # load_in_8bit = True,
-        # device_map="auto", # need accelerate
-        torch_dtype=torch.float16,
+        # torch_dtype=torch.float16,
 )
-    # TODO add pad id. Currently not using
-    # model.config.pad_token_id = tokenizer.pad_id
+# TODO add pad id. Currently not using
+# model.config.pad_token_id = tokenizer.pad_id
 eval_dataset = [
-        "I wanna go",
+        "금융정보를 받은 통신사는 인공지능 AI 을 통해",
     ]
 results = []
-device = torch.device("cuda:0")
+device = torch.device(
+    "cuda:0" if torch.cuda.is_available() 
+    else "cpu"
+    )
         
 model.to(device).eval()
     
