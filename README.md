@@ -6,7 +6,7 @@ LLaMA2-7B를 다중 gpu 환경에서 사전 학습하는 코드이다. HF Traine
 
 [추가 설명 링크](https://jkspace.notion.site/Llama2-7B-DeepSpeed-Trainer-49e78c44b7304f0388c37a95964f953d)
 
-# :round_pushpin: [실습] 6분 만에 (매우 작은) 라마 사전학습하기
+# :round_pushpin: [실습] 10분 만에 (매우 작은) 라마 사전학습하기
 
 * gpu: 24Gib x 8 (작은 모델을 사용할 거라서 하나로도 충분하다.)
 * `BASE_MODEL_ID = nickypro/tinyllama-110M`
