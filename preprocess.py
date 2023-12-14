@@ -72,11 +72,13 @@ if __name__ == "__main__":
     from transformers import AutoTokenizer
     
     DATA_PATH = "daekeun-ml/naver-news-summarization-ko"
+    DATA_TYPE = "hf" # jsonline이면 jsonl
+    SOURCE_COLUMN = "document" # 데이터셋에서 학습 데이터로 사용할 텍스트 부분
     CHUNK_SIZE = 4096
     DATASET_PREFIX = "naver_news"
     TOKENIZER_ID = "beomi/llama-2-ko-7b"
     
-    raw_dataset = make_HFdataset(DATA_PATH, source="hf", source_column="document")
+    raw_dataset = make_HFdataset(DATA_PATH, source=DATA_TYPE, source_column=SOURCE_COLUMN)
 
     print("Load Pretrained Tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(
