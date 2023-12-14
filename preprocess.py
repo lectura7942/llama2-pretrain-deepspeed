@@ -72,7 +72,7 @@ if __name__ == "__main__":
     from transformers import AutoTokenizer
     
     DATA_PATH = "daekeun-ml/naver-news-summarization-ko"
-    CHUNK_SIZE = 1024 # Llama2-7b는 4096
+    CHUNK_SIZE = 4096
     DATASET_PREFIX = "naver_news"
     TOKENIZER_ID = "beomi/llama-2-ko-7b"
     

@@ -2,7 +2,7 @@ import os
 import torch
 from transformers import TrainingArguments, Trainer, DataCollatorForLanguageModeling
 import datasets as ds
-from deepspeed.utils import logger as ds_logger # 그냥 print 사용하면 GPU 개수 마다 반복함.
+from deepspeed.utils import logger as ds_logger
 
 from model import load_model
 from configs import get_training_arguments, DATASET

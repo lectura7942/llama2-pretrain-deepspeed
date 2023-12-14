@@ -4,3 +4,4 @@ deepspeed
 datasets
 ninja
 jsonlines
+mpi4py

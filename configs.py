@@ -2,10 +2,10 @@ from transformers import AutoConfig, TrainingArguments
 import os
 from deepspeed.utils import logger as ds_logger
 
-BASE_MODEL_ID = "beomi/llama-2-ko-7b"
+BASE_MODEL_ID = "meta-llama/Llama-2-7b-hf"
 TOKENIZER_ID = "beomi/llama-2-ko-7b"
-CHUNK_SIZE = 1024 # llama2는 4096
-DATASET = "data/naver_news_1024_llama-2-ko-7b"
+CHUNK_SIZE = 4096
+DATASET = "data/naver_news_4096_llama-2-ko-7b"
 
 def get_model_config():
     """Wrapper for AutoConfig.from_pretrained(). 
@@ -49,8 +49,7 @@ def get_training_arguments():
 
         logging_steps=1,
         report_to="none", # disable wandb if logged in
-        save_strategy="steps",
-        save_total_limit=1,
+        save_strategy="no", # deepspeed zero3는 체크포인트 오류 난다.
         overwrite_output_dir=True,
         # save_on_each_node=True, # Multi-node 시 공유 메모리 없으면 각 노드에다 체크포인트 저장
     )

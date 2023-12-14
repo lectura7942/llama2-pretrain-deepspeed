@@ -35,8 +35,8 @@ def load_model():
     """
     with deepspeed.zero.Init():
         ds_logger.info("Load Model based on config...")
+        config.vocab_size = len(tokenizer) # 모델과 토크나이저가 다를 때 모델의 임베딩 크기 수정
         model = LlamaForCausalLM(config)
-        model.resize_token_embeddings(len(tokenizer)) # 모델과 토크나이저가 다를 때 모델의 임베딩 크기 수정
         ds_logger.info("Loaded Initialized Model based on config!\n")
         
 
